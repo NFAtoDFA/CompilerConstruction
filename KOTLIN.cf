@@ -1,0 +1,101 @@
+PDefs. Program ::= [Def] ;
+
+DFun.       Def ::= "fun" Id "(" [Arg] ")" ":" Type "{" [Stm] "}" ; 
+DClass.     Def ::= "class" Id "{" [Field] "}" ;
+
+terminator Def "" ;
+
+FFunDecl.   Field ::= "fun" Id "(" [Arg] ")" ":" Type "{" [Stm] "}" ";" ;
+
+FVarDecl.   Field ::= "var" Id ":" Type PotNull "=" Exp ";";
+FValDecl.   Field ::= "val" Id ":" Type PotNull "=" Exp ";" ;
+
+terminator nonempty Field "";
+
+ADecl.      Arg ::= Id ":" Type PotNull;
+
+separator Arg "," ;
+
+SExp.       Stm ::= Exp ";" ;
+SDeclVar.   Stm ::= "var" IdIn ";" ;
+SDeclVal.   Stm ::= "val" IdIn ";" ;
+SReturn.    Stm ::= "return" Exp ";" ;
+SReturnV.   Stm ::= "return" ";" ;
+SWhile.     Stm ::= "while" "(" Exp ")" Stm ;
+SFor.       Stm ::= "for" "(" Id "in" Range ")" Stm ;
+SBlock.     Stm ::= "{" [Stm] "}" ;
+SIf.        Stm ::= "if" "(" Exp ")" Stm;
+SIfElse.    Stm ::= "if" "(" Exp ")" Stm "else" Stm ;
+SWhen.      Stm ::= "when" "(" Exp ")" "{" [Branch] "}";
+
+rules       Branch ::= Exp1 "->" Stm | "else" "->" Stm;
+
+terminator Branch "" ;
+
+terminator Stm "" ;
+
+RExp.       Range ::= Exp;
+
+IdNoInit.   IdIn ::= Id ":" Type PotNull;
+IdInit.     IdIn ::= Id ":" Type PotNull "=" Exp;
+
+PNull. PotNull ::= "?" ;
+PNotNull. PotNull ::= "" ;
+
+EString.    Exp16 ::= String ;
+ETrue.      Exp16 ::= "true" ;
+EFalse.     Exp16 ::= "false" ;
+EInt.       Exp16 ::= Integer ;
+EDouble.    Exp16 ::= Double ;
+EId.        Exp16 ::= Id ;
+ENull.      Exp16 ::= "null" ;
+
+ERng.       Exp15 ::= Exp16 ".." Exp16 ;
+
+EFCall.     Exp16 ::= Id "(" [Exp] ")" ;
+
+EProj.      Exp14 ::= Exp14 "." Exp16 ;
+
+EPIncr.     Exp14 ::= Exp14 "++" ;
+EPDecr.     Exp14 ::= Exp14 "--" ;
+
+EIncr.      Exp13 ::= "++" Exp13 ;
+EDecr.      Exp13 ::= "--" Exp13 ;
+
+EUPlus.     Exp13 ::= "+" Exp13 ;
+EUMinus.    Exp13 ::= "-" Exp13 ;
+
+ETimes.     Exp12 ::=  Exp12 "*" Exp13 ;
+EDiv.     Exp12 ::=  Exp12 "/" Exp13 ;
+EAdd.     Exp11 ::=  Exp11 "+" Exp12 ;
+ESubstr.     Exp11 ::=  Exp11 "-" Exp12 ;
+
+ELt.        Exp9 ::= Exp9 "<" Exp10 ;
+EGt.        Exp9 ::= Exp9 ">" Exp10 ;
+ELtEq.      Exp9 ::= Exp9 "<=" Exp10 ;
+EGtEq.      Exp9 ::= Exp9 ">=" Exp10 ;
+EEq.        Exp8 ::= Exp8 "==" Exp9 ;
+ENEq.       Exp8 ::= Exp8 "!=" Exp9 ;
+EAnd.       Exp4 ::= Exp4 "&&" Exp5 ;
+EOr.        Exp3 ::= Exp3 "||" Exp4 ; 
+EAss.       Exp2 ::= Exp3 "=" Exp2 ;
+-- EIf.        Exp2 ::= "if" "(" Exp3 ")" Exp ";" "else" Exp2 ;
+-- EWhen.      Exp2 ::= "when" "(" Exp3 ")" "{" [Branch] "else" "->" Exp2 ";" "}" ;
+ELambda.    Exp2 ::= "{" [Arg] "->" Exp "}";
+
+coercions Exp 16 ;
+
+separator Exp "," ;
+
+rules Type ::= "Boolean" | "Int" | "Double" | "String" | "Null" | "Unit" | "IntList" | Id | FunType;
+
+FType. FunType ::= "(" [Type] ")" "->" Type ;
+separator Type "," ;
+
+token Id (letter (letter | digit | '_')*) ;
+
+comment "//" ;
+comment "/*" "*/" ;
+
+
+
